@@ -1,0 +1,101 @@
+# Báo cáo Ngày 4 - Keypoint & Pose
+
+Họ tên: **Bùi Việt Nam**   Nhóm: **K4-Team**   Ngày: **16/09/2026**
+
+> Cách dùng: copy file này thành `reports/REPORT.md`. Điền bằng số liệu do công cụ sinh ra;
+> không tự ước lượng hoặc sửa số trong file JSON.
+
+## 1. Nhãn của tôi
+
+<!-- Lấy số từ reports/visibility_report.md hoặc outputs/visibility_report.json sau Chặng 4.
+Số ảnh phải là 20; số skeleton là tổng số người trong 20 ảnh. Thời gian trung bình = tổng
+thời gian gán / 20. -->
+
+| Chỉ số | Giá trị |
+| --- | ---: |
+| Số ảnh đã gán | 20 |
+| Số skeleton | 29 |
+| v=2 / v=1 / v=0 | 353 / 115 / 25 |
+| Thời gian trung bình mỗi ảnh | ~4.5 phút |
+
+Ba khớp có `%v=1` cao nhất (chép từ `reports/visibility_report.md`):
+
+1. **left_ear** (48% - 14 ca)
+2. **right_ear** (41% - 12 ca)
+3. **left_hip** (31% - 9 ca) *(hoặc left_wrist / right_wrist đều 28%)*
+
+Chúng có đúng là những khớp bạn thấy khó gán nhất không? Nếu không, giải thích.
+
+> Đúng một phần: Tai (left_ear, right_ear) là khớp có tỷ lệ che khuất cao nhất vì trong đời sống thực tế, tóc dài, mũ bảo hiểm, mũ lưỡi trai hoặc góc mặt nghiêng thường xuyên che mất vành tai. Tuy nhiên, khớp gây khó khăn và tốn thời gian suy xét nhất lại là **khớp hông (left_hip, right_hip)**. Hông hầu như không bao giờ lộ trực tiếp trên bề mặt cơ thể do quần áo, áo khoác dài, tư thế ngồi hoặc gập người, buộc người gán nhãn phải ước lượng giải phẫu sinh học từ thắt lưng và nếp gấp đùi.
+
+## 2. Chấm với gold
+
+<!-- Lấy hai cột từ outputs/eval_vs_gold.json: một lần ngay khi protected release mở và một
+lần sau rework. Đếm số phần tử trong từng danh sách lỗi, không tự làm tròn. -->
+
+| Chỉ số | Trước rework | Sau rework |
+| --- | ---: | ---: |
+| OKS trung bình | *(Chờ gold)* | *(Chờ gold)* |
+| OKS@0.50 | *(Chờ gold)* | *(Chờ gold)* |
+| OKS@0.75 | *(Chờ gold)* | *(Chờ gold)* |
+| Lỗi `dao_trai_phai` | *(Chờ gold)* | *(Chờ gold)* |
+| Lỗi `nham_nguoi` | *(Chờ gold)* | *(Chờ gold)* |
+| Lỗi `xoa_khop_bi_che` | *(Chờ gold)* | *(Chờ gold)* |
+
+**Tôi đã sửa gì giữa hai lần chạy** (ghi cụ thể: ảnh nào, người thứ mấy, khớp nào):
+
+<!-- Mỗi dòng phải có: tên ảnh + người thứ mấy + keypoint + thao tác sửa. Không viết “đã sửa
+lại một số lỗi”. -->
+
+- *(Sẽ cập nhật sau khi chạy evaluate_pose_annotations.py ở Chặng 5)*
+
+**Lỗi đảo trái/phải của tôi xảy ra ở ảnh nào?** Ảnh đó dễ hay khó? Nếu là ảnh dễ,
+bạn nghĩ vì sao mình vẫn sai?
+
+> Không có lỗi đảo trái/phải trong toàn bộ 20 ảnh (đã kiểm tra qua `outputs/vis_train/`).
+
+## 3. Kiểm chéo
+
+> *Làm bài cá nhân độc lập (không có bạn cùng nhóm).*
+
+
+## 4. Model
+
+<!-- Chép số từ outputs/eval_model.json sau Chặng 6. “Chênh” = sau fine-tune trừ baseline;
+đây là quan sát trên tập test, không phải chất lượng sản phẩm. -->
+
+| Chỉ số | yolo26n-pose gốc | Sau fine-tune | Chênh |
+| --- | ---: | ---: | ---: |
+| pose_mAP50 | *(Chờ Colab)* | *(Chờ Colab)* | |
+| pose_mAP50-95 | *(Chờ Colab)* | *(Chờ Colab)* | |
+| pose_precision | *(Chờ Colab)* | *(Chờ Colab)* | |
+| pose_recall | *(Chờ Colab)* | *(Chờ Colab)* | |
+| box_mAP50-95 | *(Chờ Colab)* | *(Chờ Colab)* | |
+
+### Trả lời năm câu hỏi ở cuối notebook
+
+> Sẽ điền sau khi chạy notebook Colab `notebooks/day4_pose_finetune_yolo26.ipynb` ở Chặng 6.
+
+1. `pose_mAP50-95` thay đổi bao nhiêu? Nếu nó giảm, 20 ảnh của bạn dạy được model
+   điều gì mà COCO chưa dạy, và nó làm hỏng điều gì?
+
+2. `box_mAP` và `pose_mAP` chênh nhau bao nhiêu? Model tìm *người* dễ hơn hay tìm
+   *khớp* dễ hơn? Vì sao?
+
+3. Một ảnh test model đoán sai - gọi tên lỗi theo bốn loại của slide 43
+   (lệch nhẹ / đảo trái/phải / nhầm người / trượt hẳn):
+
+4. Ảnh nào có OKS thấp nhất giữa nhãn của bạn và model? Ai đúng, và bạn dựa vào đâu?
+
+5. Ảnh bạn gán tệ nhất có *cũng* là ảnh model đoán tệ nhất không? Nếu có, điều đó
+   nói gì về bức ảnh đó?
+
+## 5. Một rule evidence bạn đã dùng
+
+Chọn một keypoint trong ảnh core mà bạn phải quyết định giữa `v=1` và `v=0`. Nêu ảnh, người,
+khớp, bằng chứng nhìn thấy và lý do chọn trạng thái đó trong 3-5 câu.
+
+> **Trường hợp phân tích:** Ảnh `train_04.jpg`, người thứ 2 (cô gái lái mô tô bên phải), khớp `right_ear` (tai phải).  
+> **Căn cứ thị giác:** Đối tượng đang đội một chiếc mũ bảo hiểm cào cào (full-face) che kín toàn bộ hai bên tai và tóc, chỉ để lộ phần mắt qua kính chắn. Khung ảnh chụp bao quát từ thắt lưng trở lên và đầu người nằm hoàn toàn ở trung tâm góc trên bên phải của bức ảnh, không hề chạm hay tràn ra ngoài mép ảnh.  
+> **Lý do quyết định chọn `v=1`:** Mặc dù tai không nhìn thấy trực tiếp bằng mắt (bị mũ bảo hiểm che kín hoàn toàn), nhưng cấu trúc hộp sọ và tai người chắc chắn vẫn nằm nguyên vẹn bên trong mũ và ở trong khung hình. Do đó, theo đúng quy định của lớp, ta phải gắn cờ `v=1` (Occluded) và đặt chấm ước lượng tại vị trí giải phẫu ngang tầm mắt, tuyệt đối không được gán `v=0` (Outside) vì đối tượng không bị cắt khỏi mép ảnh.
+
