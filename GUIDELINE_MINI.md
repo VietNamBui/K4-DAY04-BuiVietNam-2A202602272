@@ -1,4 +1,4 @@
-# Mini guideline - nhóm: K4-Team  |  người gán: Bùi Việt Nam  |  ngày: 16/09/2026
+# Mini guideline - nhóm: T-019  |  người gán: Bùi Việt Nam  |  ngày: 16/09/2026
 
 > Điền file này **trong lúc** gán nhãn, không phải sau khi xong. Mỗi lần bạn dừng lại
 > hơn 10 giây để phân vân, đó là một dòng phải ghi vào đây.
