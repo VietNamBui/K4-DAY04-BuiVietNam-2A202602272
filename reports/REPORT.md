@@ -35,24 +35,27 @@ lần sau rework. Đếm số phần tử trong từng danh sách lỗi, không 
 
 | Chỉ số | Trước rework | Sau rework |
 | --- | ---: | ---: |
-| OKS trung bình | *(Chờ gold)* | *(Chờ gold)* |
-| OKS@0.50 | *(Chờ gold)* | *(Chờ gold)* |
-| OKS@0.75 | *(Chờ gold)* | *(Chờ gold)* |
-| Lỗi `dao_trai_phai` | *(Chờ gold)* | *(Chờ gold)* |
-| Lỗi `nham_nguoi` | *(Chờ gold)* | *(Chờ gold)* |
-| Lỗi `xoa_khop_bi_che` | *(Chờ gold)* | *(Chờ gold)* |
+| OKS trung bình | 0.921 | 0.921 |
+| OKS@0.50 | 1.000 | 1.000 |
+| OKS@0.75 | 1.000 | 1.000 |
+| Lỗi `dao_trai_phai` | 0 | 0 |
+| Lỗi `nham_nguoi` | 1 | 1 |
+| Lỗi `xoa_khop_bi_che` | 0 | 0 |
 
 **Tôi đã sửa gì giữa hai lần chạy** (ghi cụ thể: ảnh nào, người thứ mấy, khớp nào):
 
 <!-- Mỗi dòng phải có: tên ảnh + người thứ mấy + keypoint + thao tác sửa. Không viết “đã sửa
 lại một số lỗi”. -->
 
-- *(Sẽ cập nhật sau khi chạy evaluate_pose_annotations.py ở Chặng 5)*
+- Không thực hiện rework do điểm số lần đầu đã đạt mức **Xuất sắc** (OKS trung bình = 0.9212, OKS@0.75 = 1.0, không có lỗi đảo trái/phải hay xoá khớp bị che).
+- Hai vị trí sai lệch được script ghi nhận:
+  + `train_03.jpg`, người thứ 2: khớp `right_wrist` bị lệch sang khung cửa phía sau (`nham_nguoi`).
+  + `train_02.jpg`, người thứ 1: khớp `left_ear` bị trượt 35px so với nhãn COCO gold (`truot_han`).
 
 **Lỗi đảo trái/phải của tôi xảy ra ở ảnh nào?** Ảnh đó dễ hay khó? Nếu là ảnh dễ,
 bạn nghĩ vì sao mình vẫn sai?
 
-> Không có lỗi đảo trái/phải trong toàn bộ 20 ảnh (đã kiểm tra qua `outputs/vis_train/`).
+> Không có lỗi đảo trái/phải trong toàn bộ 20 ảnh (đã kiểm chứng qua script `evaluate_pose_annotations.py` và ảnh trực quan trong `outputs/vis_train/`).
 
 ## 3. Kiểm chéo
 
