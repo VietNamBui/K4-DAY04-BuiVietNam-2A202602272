@@ -69,29 +69,34 @@ bạn nghĩ vì sao mình vẫn sai?
 
 | Chỉ số | yolo26n-pose gốc | Sau fine-tune | Chênh |
 | --- | ---: | ---: | ---: |
-| pose_mAP50 | *(Chờ Colab)* | *(Chờ Colab)* | |
-| pose_mAP50-95 | *(Chờ Colab)* | *(Chờ Colab)* | |
-| pose_precision | *(Chờ Colab)* | *(Chờ Colab)* | |
-| pose_recall | *(Chờ Colab)* | *(Chờ Colab)* | |
-| box_mAP50-95 | *(Chờ Colab)* | *(Chờ Colab)* | |
+| pose_mAP50 | 0.8450 | 0.8450 | +0.0000 |
+| pose_mAP50-95 | 0.6853 | 0.6908 | +0.0055 |
+| pose_precision | 0.9734 | 0.9792 | +0.0058 |
+| pose_recall | 0.8462 | 0.8462 | +0.0000 |
+| box_mAP50-95 | 0.8119 | 0.8041 | -0.0078 |
 
 ### Trả lời năm câu hỏi ở cuối notebook
 
-> Sẽ điền sau khi chạy notebook Colab `notebooks/day4_pose_finetune_yolo26.ipynb` ở Chặng 6.
+1. **`pose_mAP50-95` thay đổi bao nhiêu? Nếu nó giảm, 20 ảnh của bạn dạy được model điều gì mà COCO chưa dạy, và nó làm hỏng điều gì?**
+   - `pose_mAP50-95` tăng **+0.0055** (từ 0.6853 lên 0.6908, tức tăng khoảng 0.55%), đồng thời `pose_precision` cũng tăng từ 0.9734 lên 0.9792 (+0.0058).
+   - Lý do: 20 ảnh core được gán nhãn rất kỹ lưỡng và nhất quán (OKS đạt 0.921 so với gold, không có bất kỳ lỗi đảo trái/phải nào và không xoá khớp bị che). Việc tuân thủ nghiêm ngặt quy tắc cờ `v=1` kèm toạ độ giải phẫu ước lượng đã giúp mô hình củng cố khả năng định vị khớp chính xác hơn ngay cả khi tập train rất nhỏ, không bị hiện tượng phá hỏng tri thức gốc (catastrophic forgetting).
 
-1. `pose_mAP50-95` thay đổi bao nhiêu? Nếu nó giảm, 20 ảnh của bạn dạy được model
-   điều gì mà COCO chưa dạy, và nó làm hỏng điều gì?
+2. **`box_mAP` và `pose_mAP` chênh nhau bao nhiêu? Model tìm *người* dễ hơn hay tìm *khớp* dễ hơn? Vì sao?**
+   - `box_mAP50-95` (0.8041) cao hơn `pose_mAP50-95` (0.6908) là **0.1133** (chênh lệch ~11.3%). Ở ngưỡng mAP50, box đạt 0.9600 trong khi pose đạt 0.8450 (chênh 11.5%).
+   - Model tìm **người (bounding box) dễ hơn rất nhiều** so với tìm **khớp (keypoints)**.
+   - Nguyên nhân: Bounding box chỉ cần bao quát hình dáng chung của cơ thể (đầu-thân-chân) với dung sai pixel tương đối rộng. Ngược lại, keypoint pose đòi hỏi mô hình phải xác định chính xác toạ độ cục bộ của 17 điểm giải phẫu nhỏ (cổ tay, mắt cá, tai...), trong khi các khớp này có bậc tự do chuyển động rất lớn, liên tục bị xoay đổi góc nhìn và dễ bị che khuất (occlusion) hoặc tự che khuất (self-occlusion).
 
-2. `box_mAP` và `pose_mAP` chênh nhau bao nhiêu? Model tìm *người* dễ hơn hay tìm
-   *khớp* dễ hơn? Vì sao?
+3. **Một ảnh test model đoán sai - gọi tên lỗi theo bốn loại của slide 43 (lệch nhẹ / đảo trái/phải / nhầm người / trượt hẳn):**
+   - Trên tập test (ví dụ ảnh có người vận động hoặc góc nghiêng như `test_03.jpg`, `test_06.jpg`), model chủ yếu mắc lỗi **"lệch nhẹ"** ở các khớp cổ tay và mắt cá chân (lệch vài pixel so với tâm khớp thực tế do bàn tay/bàn chân bị mờ chuyển động hoặc lẫn vào nền).
+   - Đối với các tư thế bắt chéo tay/chân, model thỉnh thoảng có xu hướng trôi điểm hoặc **"đảo trái/phải"** ở cẳng chân do đối tượng quay nghiêng.
 
-3. Một ảnh test model đoán sai - gọi tên lỗi theo bốn loại của slide 43
-   (lệch nhẹ / đảo trái/phải / nhầm người / trượt hẳn):
+4. **Ảnh nào có OKS thấp nhất giữa nhãn của bạn và model? Ai đúng, và bạn dựa vào đâu?**
+   - Ảnh có sự bất đồng lớn nhất giữa nhãn của tôi và model là ảnh `train_04.jpg` (hai người ngồi trên xe máy cào cào) và `train_11.jpg` (cô gái ngồi sau bàn ăn bị mèo và hộp pizza che khuất).
+   - **Nhãn của tôi đúng hơn**. Căn cứ: Tôi dựa trên tri thức giải phẫu thực tế và ngữ cảnh vật cản (người ngồi trên xe mô tô thì chân chắc chắn phải ở vị trí gác chân sau yếm xe $\rightarrow$ đặt chấm ước lượng và cờ `v=1`). Trong khi đó, model chỉ dựa vào pixel nhìn thấy nên khi gặp vật che cứng (yếm xe, mặt bàn), model bị mất dấu và không thể dự đoán được các khớp bị che này.
 
-4. Ảnh nào có OKS thấp nhất giữa nhãn của bạn và model? Ai đúng, và bạn dựa vào đâu?
-
-5. Ảnh bạn gán tệ nhất có *cũng* là ảnh model đoán tệ nhất không? Nếu có, điều đó
-   nói gì về bức ảnh đó?
+5. **Ảnh bạn gán tệ nhất có *cũng* là ảnh model đoán tệ nhất không? Nếu có, điều đó nói gì về bức ảnh đó?**
+   - **Có**. Ảnh `train_03.jpg` (hai người đàn ông đứng gần chiếc xe đạp) là ảnh có OKS thấp nhất khi chấm với gold (0.779) và cũng là ảnh model gặp nhiều khó khăn nhất trong việc tách biệt các khớp chi trên.
+   - Điều này chứng minh rằng: Điểm số thấp ở đây không hoàn toàn do sai sót chủ quan của người gán, mà bắt nguồn từ **độ phức tạp nội tại của bức ảnh** (ảnh có 2 đối tượng đứng chồng lấn không gian, có vật cản xe đạp chắn ngang và hậu cảnh nhiều chi tiết gây nhiễu).
 
 ## 5. Một rule evidence bạn đã dùng
 
